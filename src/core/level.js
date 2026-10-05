@@ -306,6 +306,7 @@ export class Level {
   // Writes all edits back into the ROM. Raw segments are patched in place; compressed
   // segments are recompressed and either written in place (when they still fit) or
   // appended to the end of the ROM, updating the level script commands that load them.
+  // Call rom.updateChecksum() before exporting the ROM.
   commit() {
     const report = { written: [], relocated: [] };
     let pending;
@@ -345,7 +346,6 @@ export class Level {
       s.dirty = false;
       report.written.push(s);
     }
-    this.rom.updateChecksum();
     return report;
   }
 }

@@ -243,7 +243,7 @@ export class App {
     this.mode = mode;
     for (const b of document.querySelectorAll('[data-mode]')) b.classList.toggle('active', b.dataset.mode === mode);
     this.select(null);
-    this.renderOutline();
+    this.rebuildCollision();
   }
 
   // ---------------------------------------------------------------- entities
@@ -786,8 +786,9 @@ export class App {
     const s = d.startPos;
     const next = d.vertical ? [s[0], hit[1], s[2]] : [hit[0], s[1], hit[2]];
     d.entity.position = next.map((c) => Math.max(-32768, Math.min(32767, Math.round(c))));
-    if (d.entity.kind === 'vertex') this.rebuildCollision();
-    this.renderProperties();
+    // Expensive updates are deferred to the next animation frame.
+    if (d.entity.kind === 'vertex') this.collisionDirty = true;
+    this.propertiesDirty = true;
   }
 
   // ---------------------------------------------------------------- render loop
@@ -808,6 +809,14 @@ export class App {
       if (this.keys.has('q')) move = vec3.sub(move, [0, 1, 0]);
       this.camera.move(vec3.scale(move, speed));
       this.needsRedraw = true;
+    }
+    if (this.collisionDirty) {
+      this.collisionDirty = false;
+      this.rebuildCollision();
+    }
+    if (this.propertiesDirty) {
+      this.propertiesDirty = false;
+      this.renderProperties();
     }
     if (this.needsRedraw && this.renderer) {
       this.needsRedraw = false;

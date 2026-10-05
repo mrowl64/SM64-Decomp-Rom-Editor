@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { Rom } from '../src/core/rom.js';
+import { Rom, calculateChecksum } from '../src/core/rom.js';
 import { readS16, readU16, readU32 } from '../src/core/binary.js';
 import { decompress } from '../src/core/compression.js';
 import { discoverLevels, Level } from '../src/core/level.js';
@@ -102,6 +102,7 @@ for (const compression of ['mio0', 'yay0', 'raw']) {
     area.warps[0].setField('destNode', 0xf0);
     assert.ok(level.dirty);
     level.commit();
+    rom.updateChecksum();
     assert.ok(!level.dirty);
 
     // Re-open the edited ROM from scratch.
@@ -122,6 +123,7 @@ for (const compression of ['mio0', 'yay0', 'raw']) {
     assert.equal(again.marioStarts[0].yaw, -90);
     assert.equal(a.warps[0].destNode, 0xf0);
     // The checksum was refreshed.
+    assert.deepEqual(reopened.checksum, calculateChecksum(reopened.data));
     assert.notDeepEqual(reopened.checksum, [0, 0]);
     assert.ok(reopened.size >= ROM_SIZE);
   });
