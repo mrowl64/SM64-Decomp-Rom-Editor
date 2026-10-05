@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SM64 Decomp ROM Editor</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="src/ui/style.css" />
+  </head>
+  <body>
+    <header id="toolbar">
+      <strong class="brand">SM64 Decomp ROM Editor</strong>
+      <label class="button">Open ROM<input type="file" id="rom-input" accept=".z64,.v64,.n64,.bin" hidden /></label>
+      <label class="button" title="Optional: linker map from the decomp build (e.g. build/us/sm64.us.map) to show behavior names">
+        Load .map<input type="file" id="map-input" accept=".map,.txt" hidden />
+      </label>
+      <span class="sep"></span>
+      <label>Level <select id="level-select" disabled></select></label>
+      <label>Area <select id="area-select" disabled></select></label>
+      <span class="sep"></span>
+      <div class="segmented" role="group" aria-label="Editor mode">
+        <button data-mode="objects" class="active">Objects</button>
+        <button data-mode="geometry">Geometry</button>
+      </div>
+      <label class="check"><input type="checkbox" id="wireframe" checked /> Wireframe</label>
+      <span class="sep"></span>
+      <button id="undo" title="Undo (Ctrl+Z)" disabled>Undo</button>
+      <button id="redo" title="Redo (Ctrl+Y)" disabled>Redo</button>
+      <button id="export-obj" title="Export the area's collision as a Wavefront OBJ" disabled>Export OBJ</button>
+      <button id="save-rom" class="primary" disabled>Save ROM</button>
+    </header>
+    <main>
+      <aside id="outline"><p class="hint">Open a ROM to begin.</p></aside>
+      <div id="viewport">
+        <canvas id="view"></canvas>
+        <div id="drop-hint">
+          <h2>Open or drop a Super Mario 64 ROM</h2>
+          <p>Works with <code>.z64</code> ROMs built from the decompilation (and vanilla/v64/n64 dumps).</p>
+          <p>Optionally drop the build's <code>.map</code> file to see behavior names.</p>
+        </div>
+        <div id="help">
+          <b>Camera</b>: right-drag or drag empty space to look · WASD move · Q/E down/up · wheel zoom · Shift = faster<br />
+          <b>Edit</b>: click to select · drag to move on the ground plane · Shift+drag to move vertically ·
+          F focus · G drop to ground · Ctrl+Z / Ctrl+Y undo/redo · Esc deselect
+        </div>
+      </div>
+      <aside id="properties"><p class="hint">Nothing selected.</p></aside>
+    </main>
+    <footer id="status">Ready.</footer>
+    <datalist id="behavior-list"></datalist>
+    <script type="module" src="src/ui/app.js"></script>
+  </body>
+</html>
